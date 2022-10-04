@@ -49,10 +49,15 @@ int main(int argc,const char* argv[]){
 
 void printProblems(P problems,int p_num){
     for(i=0;i<p_num;i++){
-        for(j=0,k=0;j<problems->cLen;){
-            cout<<problems->number[k++];
-            cout<<problems->character[j++];
-            cout<<problems->number[k++];
+        for(j=0,k=0;j<problems[i].cLen;){
+            cout<<dec<<problems[i].number[k++]<<'|';
+            if(problems[i].character[j]=='d'){
+                cout<<"÷";
+                j++;
+            }
+            else cout<<problems[i].character[j++];
+            if(j==problems[i].cLen-1)
+                cout<<dec<<problems[i].number[k]<<'|';
         }
         cout<<endl;                   
     }
@@ -60,25 +65,23 @@ void printProblems(P problems,int p_num){
 
 P createProblems(int p_num,int i_num){
     P problems;
-    // srand((unsigned)time(NULL));
     problems=(P)malloc(p_num*sizeof(P));
-    // cout<<"bp1";
-    cout<<"p_num is:"<<p_num<<'\t'<<"i_num is:"<<i_num<<endl;
-    for(i=0;i<p_num;i++){
-        problems[i]=createOneproblem(i_num);
+    // cout<<"bp1"; //bp
+    // cout<<"p_num is:"<<p_num<<'\t'<<"i_num is:"<<i_num<<endl;
+    for(int t=0;t<p_num;t++){
+        problems[t]=createOneproblem(i_num);
         // printf("%d\n",i);
-        cout<<"now I've created "<<i<<" problems"<<endl;
+        cout<<"now I've created "<<t<<" problems"<<endl;
     }
     return problems;    
 }
 
-problem createOneproblem(int i_num){
+problem  createOneproblem(int i_num){
     int r_num=0,r=0;
-    // srand((unsigned)time(NULL));
-    // cout<<"bp2 before malloc in createOneproblem"<<endl;
+    // cout<<"bp2 before malloc in createOneproblem"<<endl; //bp
     problem problem;
-    // cout<<"bp3 after malloc in createOneproblem"<<endl;
-    // cout<<"bp4 bf rand_i"<<endl;
+    // cout<<"bp3 after malloc in createOneproblem"<<endl;  //bp
+    // cout<<"bp4 bf rand_i"<<endl; //bp
     while((r_num=((rand()%i_num+1)/1))<2);    //configure the amount of items;
     // cout<<"bp5 af rand_i"<<endl;
 
@@ -87,12 +90,13 @@ problem createOneproblem(int i_num){
         cout<<"space divided failed!"<<endl;
         return problem;
     }
-    // cout<<"bp6 af malloc"<<endl;
+    // cout<<"bp6 af malloc"<<endl; //bp
     cout<<"r_num: "<<r_num<<endl;
     for(i=0,j=0,k=0;j<r_num;j++){
-        // cout<<"I've run into the for in createOneproblem!"<<endl;
+        // cout<<"I've run into the for in createOneproblem!"<<endl;    //bp
         opt=static_cast<OPERATOR>((rand()%4)+1);
         type=static_cast<INT_OR_FT>((rand()%2)+1);
+        // cout<<"opt is:(1~4)"<<opt<<"type is:(1~2)"<<type<<endl;  //bp
         switch (opt)
         {
         case add:
@@ -102,27 +106,46 @@ problem createOneproblem(int i_num){
             problem.character[k++]='-';
             break;
         case divide:
-            problem.character[k++]='/';
+            problem.character[k++]='d';
             break;
         case multiply:
             problem.character[k++]='x';
             break;
         default:
+            problem.character[k++]='+';
             break;
         }
-        cout<<"bp between switch"<<endl;
+        // cout<<"bp between switch"<<endl;    //bp
         switch (type)
         {
         case I:
-            problem.number[i++]=(rand()%100+1)/1;
+            problem.number[i++]=(rand()%100);
             break;
         case F:
-            problem.number[i++]=(rand()%100+1)/1;  //molecule
+            problem.number[i++]=(rand()%100);  //molecule
             problem.character[k++]='/';            
-            problem.number[i++]=(rand()%100+1)/1;  //denominator
+            problem.number[i++]=(rand()%100);  //denominator
+            break;
+        default:
             break;
         }
-        cout<<"bp af switch"<<endl;
+        if(j==r_num-1){
+            type=static_cast<INT_OR_FT>((rand()%2)+1);
+            switch (type)
+            {
+                case I:
+                    problem.number[i++]=(rand()%100);
+                    break;
+                case F:
+                    problem.number[i++]=(rand()%100);  //molecule
+                    problem.character[k++]='/';            
+                    problem.number[i++]=(rand()%100);  //denominator
+                    break;
+                default:
+                    break;
+            }
+        }
+        // cout<<"bp af switch"<<endl; //bp
     }
     problem.cLen=k;problem.nLen=i;
     return problem;
